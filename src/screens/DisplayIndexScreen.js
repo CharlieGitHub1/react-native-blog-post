@@ -1,10 +1,11 @@
 import React, { useContext } from "react";
-import { View, Text, StyleSheet, FlatList, ScrollView } from "react-native";
-import BlogPostContext from "../context/BlogPostContext";
+import { View, Text, StyleSheet, FlatList, Button } from "react-native";
+import { Context as BlogPostContext } from "../context/BlogPostContext";
 import { LinearGradient } from "expo-linear-gradient";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const DisplayPostScreen = () => {
-  const caption = useContext(BlogPostContext);
+  const { state, addBlogPost } = useContext(BlogPostContext);
 
   console.log(FlatList);
 
@@ -18,12 +19,18 @@ const DisplayPostScreen = () => {
       <Text style={styles.titleStyle}>
         This screen will be displaying a post
       </Text>
+      <Button title="Post" onPress={addBlogPost} />
       <FlatList
-        data={caption}
-        keyExtractor={(caption) => caption.title}
+        data={state}
+        keyExtractor={(blogPostState) => blogPostState.title}
         renderItem={({ item }) => {
           return (
             <View style={styles.viewStyle}>
+              <MaterialCommunityIcons
+                name="delete-forever"
+                size={24}
+                color="black"
+              />
               <Text style={styles.textStyle}>{item.title}</Text>
             </View>
           );
