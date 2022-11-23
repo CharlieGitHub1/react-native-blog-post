@@ -1,11 +1,18 @@
 import React, { useContext } from "react";
-import { View, Text, StyleSheet, FlatList, Button } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import { Context as BlogPostContext } from "../context/BlogPostContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
-const DisplayPostScreen = () => {
-  const { state, addBlogPost } = useContext(BlogPostContext);
+const DisplayIndexScreen = ({ navigation }) => {
+  const { state, deleteBlogPost } = useContext(BlogPostContext);
 
   console.log(FlatList);
 
@@ -16,28 +23,42 @@ const DisplayPostScreen = () => {
         colors={["rgba(0,0,0,1)", "rgba(22, 17, 47, 1)"]}
         style={styles.background}
       />
-      <Text style={styles.titleStyle}>
-        This screen will be displaying a post
-      </Text>
-      <Button title="Post" onPress={addBlogPost} />
+      <Text style={styles.titleStyle}>MY BLOG POSTS</Text>
       <FlatList
         data={state}
         keyExtractor={(blogPostState) => blogPostState.title}
         renderItem={({ item }) => {
           return (
-            <View style={styles.viewStyle}>
-              <MaterialCommunityIcons
-                name="delete-forever"
-                size={24}
-                color="black"
-              />
-              <Text style={styles.textStyle}>{item.title}</Text>
-            </View>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Post", { id: item.id })}
+            >
+              <View style={styles.viewStyle}>
+                <Text style={styles.textStyle}>
+                  {item.title} - ID # {item.id}
+                </Text>
+                <TouchableOpacity onPress={() => deleteBlogPost(item.id)}>
+                  <MaterialCommunityIcons
+                    name="delete-forever"
+                    style={styles.iconStyle}
+                  />
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
           );
         }}
       />
     </>
   );
+};
+
+DisplayIndexScreen.navigationOptions = ({ navigation }) => {
+  return {
+    headerRight: () => (
+      <TouchableOpacity onPress={() => navigation.navigate("Create")}>
+        <MaterialIcons name="add-box" style={styles.plusIconStyle} />
+      </TouchableOpacity>
+    ),
+  };
 };
 
 const styles = StyleSheet.create({
@@ -51,17 +72,33 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   titleStyle: {
-    fontSize: 30,
+    fontSize: 20,
     fontWeight: "bold",
     alignSelf: "center",
     color: "white",
+    margin: 20,
   },
   viewStyle: {
-    backgroundColor: "white",
-    marginVertical: 10,
+    backgroundColor: "transparent",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    color: "white",
+    paddingVertical: 10,
+    padding: 5,
+    marginVertical: 5,
     marginHorizontal: 10,
     borderRadius: 4,
-    padding: 10,
+    borderWidth: 0.5,
+    borderColor: "#d6d7da",
+  },
+  iconStyle: {
+    fontSize: 24,
+    color: "white",
+  },
+  plusIconStyle: {
+    fontSize: 30,
+    color: "black",
+    marginHorizontal: 40,
   },
   textStyle: {
     fontSize: 20,
@@ -70,4 +107,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DisplayPostScreen;
+export default DisplayIndexScreen;

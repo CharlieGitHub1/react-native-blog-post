@@ -1,28 +1,21 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useContext } from "react";
+import { View, Text } from "react-native";
+import { Context } from "../context/BlogPostContext";
+import Form from "../components/Form";
 
-const DisplayCreateScreen = () => {
+const DisplayCreateScreen = ({ navigation }) => {
+  const { addBlogPost } = useContext(Context);
+
   return (
-    <View style={styles.viewContainerStyle}>
-      <Text style={styles.viewContainerStyle}>
-        This screen will be for creating a post
-      </Text>
+    <View>
+      <Text>CREATE SCREEN</Text>
+      <Form
+        onSubmit={(title, content) => {
+          addBlogPost(title, content, () => navigation.navigate("Index"));
+        }}
+      />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  viewContainerStyle: {
-    backgroundColor: "black",
-    color: "white",
-    width: "100%",
-    height: "100%",
-  },
-  titleStyle: {
-    fontSize: 35,
-    fontWeight: "bold",
-    alignSelf: "center",
-  },
-});
 
 export default DisplayCreateScreen;
