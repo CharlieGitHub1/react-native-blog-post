@@ -1,7 +1,10 @@
 import createDataContext from "./createDataContext";
+import dataBaseServer from "../api/dataBaseServer";
 
 const blogPostReducer = (state, action) => {
   switch (action.type) {
+    case "get_post":
+      return action.payload;
     case "add_post":
       return [
         ...state,
@@ -23,8 +26,9 @@ const blogPostReducer = (state, action) => {
 };
 
 const addBlogPost = (dispatch) => {
-  return (title, content, callback) => {
-    dispatch({ type: "add_post", payload: { title, content } });
+  return async (title, content, callback) => {
+    await dataBaseServer.post("/blog-posts", { title, content });
+    //   dispatch({ type: "add_post", payload: { title, content } });
     if (callback) {
       callback();
     }
@@ -32,22 +36,34 @@ const addBlogPost = (dispatch) => {
 };
 
 const deleteBlogPost = (dispatch) => {
-  return (id) => {
+  return async (id) => {
+    await dataBaseServer.delete(`/blog-posts/${id}`);
     dispatch({ type: "delete_post", payload: id });
   };
 };
 
 const editBlogPost = (dispatch) => {
-  return (id, title, content, callback) => {
-    dispatch({ type: "edit_post", payload: { id, title, content } });
+  return async (id, title, content, callback) => {
+    await dataBaseServer.put(`/blog-posts/${id}`, { title, content });
+    dispatch({
+      type: "edit_post",
+      payload: { id, title, content },
+    });
     if (callback) {
       callback();
     }
   };
 };
 
+const getBlogPost = (dispatch) => {
+  return async () => {
+    const response = await dataBaseServer.get("/blog-posts");
+    dispatch({ type: "get_post", payload: response.data });
+  };
+};
+
 export const { Context, Provider } = createDataContext(
   blogPostReducer,
-  { addBlogPost, deleteBlogPost, editBlogPost },
-  [{ title: "TEST POST", content: "TEST CONTENT", id: 1 }]
+  { addBlogPost, deleteBlogPost, editBlogPost, getBlogPost },
+  []
 );

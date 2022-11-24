@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,11 +8,20 @@ import {
 } from "react-native";
 import { Context as BlogPostContext } from "../context/BlogPostContext";
 import { LinearGradient } from "expo-linear-gradient";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 const DisplayIndexScreen = ({ navigation }) => {
-  const { state, deleteBlogPost } = useContext(BlogPostContext);
+  const { state, deleteBlogPost, getBlogPost } = useContext(BlogPostContext);
+
+  useEffect(() => {
+    getBlogPost();
+    const listener = navigation.addListener("didFocus", () => {
+      getBlogPost();
+    });
+    return () => {
+      listener.remove();
+    };
+  }, []);
 
   console.log(FlatList);
 
